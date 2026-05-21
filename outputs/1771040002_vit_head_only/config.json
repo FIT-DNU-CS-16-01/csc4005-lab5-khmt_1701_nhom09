@@ -1,0 +1,30 @@
+{
+  "config": "configs/baseline_vit_head_only.json",
+  "data_dir": "c:\\Coding\\HocSau\\ThucHanh\\csc4005-lab5-khmt_1701_nhom09\\data\\mit_indoor_smartcampus_5",
+  "project": "csc4005-lab6-mit-indoor-vit",
+  "run_name": "vit_b16_head_only",
+  "model_name": "vit_b_16",
+  "train_mode": "head_only",
+  "classes": [
+    "classroom",
+    "computerroom",
+    "library",
+    "corridor",
+    "office"
+  ],
+  "img_size": 224,
+  "dropout": 0.2,
+  "epochs": 10,
+  "batch_size": 16,
+  "lr": 0.001,
+  "weight_decay": 0.0001,
+  "val_ratio": 0.15,
+  "test_ratio": 0.15,
+  "max_per_class": null,
+  "num_workers": 0,
+  "patience": 5,
+  "seed": 42,
+  "augment": true,
+  "no_pretrained": false,
+  "use_wandb": true
+}

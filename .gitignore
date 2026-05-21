@@ -11,13 +11,12 @@ data/*
 *.zip
 *.tar
 *.tar.gz
-*.pt
-*.pth
 *.ckpt
 
-# Outputs
-outputs/*
-!outputs/.gitkeep
+# Outputs – cho phep push outputs/ de thanh vien nhom doc ket qua
+# Chi ignore file model lon (.pt, .pth) trong outputs
+outputs/**/*.pt
+outputs/**/*.pth
 wandb/
 
 # OS / IDE

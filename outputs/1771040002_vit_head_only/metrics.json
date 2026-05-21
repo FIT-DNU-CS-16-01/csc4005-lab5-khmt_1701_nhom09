@@ -1,0 +1,15 @@
+{
+  "best_epoch": 10,
+  "best_val_macro_f1": 0.9321069518716577,
+  "test_acc": 0.9137931034482759,
+  "test_macro_f1": 0.8810734201144612,
+  "test_loss": 0.1677880272718853,
+  "total_params": 85802501,
+  "trainable_params": 3845,
+  "trainable_ratio": 4.481221357405421e-05,
+  "num_classes": 5,
+  "num_samples": 789,
+  "num_train": 557,
+  "num_val": 116,
+  "num_test": 116
+}
