@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/kUEG02mW)
 # CSC4005 Lab 5 – Vision Transformer for Smart Campus Scene Classification
 
 Starter kit này dành cho **Lab 5 của học phần CSC4005**.
