@@ -1,8 +1,10 @@
 {
+  "config": "configs/baseline_vit_finetune_lowlr.json",
+  "data_dir": "data/indoorCVPR_09/Images",
   "project": "csc4005-lab6-mit-indoor-vit",
-  "run_name": "vit_b16_head_only",
+  "run_name": "1771040029_vit_finetune_lowlr_e50",
   "model_name": "vit_b_16",
-  "train_mode": "head_only",
+  "train_mode": "finetune",
   "device": "cuda",
   "classes": [
     "classroom",
@@ -14,13 +16,16 @@
   "img_size": 224,
   "dropout": 0.2,
   "epochs": 50,
-  "batch_size": 16,
-  "lr": 0.001,
+  "batch_size": 8,
+  "lr": 2e-05,
   "weight_decay": 0.0001,
   "val_ratio": 0.15,
   "test_ratio": 0.15,
-  "augment": true,
-  "seed": 42,
+  "max_per_class": null,
+  "num_workers": 0,
   "patience": 0,
+  "seed": 42,
+  "augment": true,
+  "no_pretrained": false,
   "use_wandb": true
 }

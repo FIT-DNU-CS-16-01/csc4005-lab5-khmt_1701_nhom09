@@ -31,10 +31,11 @@ def parse_args():
     parser.add_argument("--run_name", type=str, default="vit_b16_head_only")
     parser.add_argument("--model_name", type=str, default="vit_b_16")
     parser.add_argument("--train_mode", type=str, choices=["head_only", "finetune"], default="head_only")
+    parser.add_argument("--device", type=str, choices=["cuda", "cpu", "auto"], default="cuda")
     parser.add_argument("--classes", nargs="+", default=["classroom", "computerroom", "library", "corridor", "office"])
     parser.add_argument("--img_size", type=int, default=224)
     parser.add_argument("--dropout", type=float, default=0.2)
-    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--weight_decay", type=float, default=1e-4)
@@ -42,24 +43,30 @@ def parse_args():
     parser.add_argument("--test_ratio", type=float, default=0.15)
     parser.add_argument("--max_per_class", type=int, default=None)
     parser.add_argument("--num_workers", type=int, default=0)
-    parser.add_argument("--patience", type=int, default=5)
+    parser.add_argument("--patience", type=int, default=0)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--augment", action="store_true")
     parser.add_argument("--no_pretrained", action="store_true")
     parser.add_argument("--use_wandb", action="store_true")
+    config_args, _ = parser.parse_known_args()
+    if config_args.config:
+        config = json.loads(Path(config_args.config).read_text(encoding="utf-8"))
+        parser.set_defaults(**config)
     return parser.parse_args()
 
 
-def load_config_into_args(args):
-    if args.config is None:
-        return args
-    config = json.loads(Path(args.config).read_text(encoding="utf-8"))
-    for key, value in config.items():
-        if hasattr(args, key):
-            setattr(args, key, value)
-    return args
+def resolve_device(device_name: str) -> torch.device:
+    if device_name == "auto":
+        if torch.cuda.is_available():
+            return torch.device("cuda")
+        return torch.device("cpu")
 
+    if device_name == "cuda":
+        if not torch.cuda.is_available():
+            raise RuntimeError("Huấn luyện được cấu hình dùng GPU, nhưng CUDA không khả dụng trên máy hiện tại.")
+        return torch.device("cuda")
 
+    return torch.device("cpu")
 @torch.no_grad()
 def evaluate(model, loader, criterion, device):
     model.eval()
@@ -82,15 +89,17 @@ def evaluate(model, loader, criterion, device):
 
 
 def main() -> None:
-    args = load_config_into_args(parse_args())
+    args = parse_args()
     if args.data_dir is None:
         raise ValueError("Please provide --data_dir pointing to MIT Indoor Scenes subset.")
 
     set_seed(args.seed)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = resolve_device(args.device)
+    pin_memory = device.type == "cuda"
 
     output_dir = ensure_dir(Path("outputs") / args.run_name)
     save_json(vars(args), output_dir / "config.json")
+    print(f"Using device: {device}")
 
     train_dataset_full = SmartCampusIndoorDataset(
         data_dir=args.data_dir,
@@ -115,18 +124,26 @@ def main() -> None:
     )
 
     # Reuse identical indices for non-augmented validation/test dataset.
-    train_loader = DataLoader(train_idx, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
+    train_loader = DataLoader(
+        train_idx,
+        batch_size=args.batch_size,
+        shuffle=True,
+        num_workers=args.num_workers,
+        pin_memory=pin_memory,
+    )
     val_loader = DataLoader(
         torch.utils.data.Subset(eval_dataset_full, val_idx.indices),
         batch_size=args.batch_size,
         shuffle=False,
         num_workers=args.num_workers,
+        pin_memory=pin_memory,
     )
     test_loader = DataLoader(
         torch.utils.data.Subset(eval_dataset_full, test_idx.indices),
         batch_size=args.batch_size,
         shuffle=False,
         num_workers=args.num_workers,
+        pin_memory=pin_memory,
     )
 
     save_json(train_dataset_full.class_to_idx, output_dir / "class_to_idx.json")
@@ -234,7 +251,7 @@ def main() -> None:
         else:
             no_improve += 1
 
-        if no_improve >= args.patience:
+        if args.patience > 0 and no_improve >= args.patience:
             print(f"Early stopping at epoch {epoch}.")
             break
 

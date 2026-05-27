@@ -1,4 +1,6 @@
 {
+  "config": "configs/debug_smoke.json",
+  "data_dir": "data/indoorCVPR_09/Images",
   "project": "csc4005-lab6-mit-indoor-vit",
   "run_name": "debug_smoke",
   "model_name": "vit_b_16",
@@ -20,7 +22,10 @@
   "val_ratio": 0.15,
   "test_ratio": 0.15,
   "max_per_class": 8,
-  "augment": false,
+  "num_workers": 0,
+  "patience": 0,
   "seed": 42,
+  "augment": false,
+  "no_pretrained": false,
   "use_wandb": false
 }

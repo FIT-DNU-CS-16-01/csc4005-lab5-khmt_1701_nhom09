@@ -1,0 +1,7 @@
+{
+  "classroom": 0,
+  "computerroom": 1,
+  "library": 2,
+  "corridor": 3,
+  "office": 4
+}

@@ -1,7 +1,7 @@
 {
   "project": "csc4005-lab6-mit-indoor-vit",
-  "run_name": "debug_smoke",
-  "model_name": "vit_b_16",
+  "run_name": "resnet18_head_only",
+  "model_name": "resnet18",
   "train_mode": "head_only",
   "device": "cuda",
   "classes": [
@@ -13,14 +13,14 @@
   ],
   "img_size": 224,
   "dropout": 0.2,
-  "epochs": 1,
-  "batch_size": 2,
+  "epochs": 50,
+  "batch_size": 32,
   "lr": 0.001,
   "weight_decay": 0.0001,
   "val_ratio": 0.15,
   "test_ratio": 0.15,
-  "max_per_class": 8,
-  "augment": false,
+  "augment": true,
   "seed": 42,
-  "use_wandb": false
+  "patience": 0,
+  "use_wandb": true
 }
